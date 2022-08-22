@@ -1,0 +1,135 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<script src="~/js/jquery.js"></script>
+
+
+
+
+<form  id="personelform">
+  <div class="form-group">
+    <label for="formGroupExampleInput">isim</label>
+    <input type="text" class="form-control" name="kisi_isim" id="formGroupExampleInput" placeholder="isim">
+  </div>
+  <div class="form-group">
+    <label for="formGroupExampleInput2"> soyisim</label>
+    <input type="text" class="form-control" name="kisi_soyad" id="formGroupExampleInput2" placeholder=" soyisim">
+  </div>
+   <div class="form-group">
+    <label for="formGroupExampleInput2"> yaş</label>
+    <input type="text" class="form-control" name="kisi_yas" id="formGroupExampleInput2" placeholder="yaş">
+  </div>
+  <br />
+    <div class="form-group">
+    <label for="formGroupExampleInput2"> silinecek kisi id</label>
+    <input type="text" class="form-control" name="kisi_isim" id="silinecekkisi" placeholder="isim">
+  </div>
+  <br />
+     <div class="form-group">
+    <label for="formGroupExampleInput2"> guncellenecek kisi id</label>
+    <input type="text" class="form-control" name="" id="guncellenecekid" placeholder="id">
+  </div>
+  <br />
+    <div class="form-group">
+    <label for="formGroupExampleInput2"> yeni ad</label>
+    <input type="text" class="form-control" name="kisi_name" id="yeniad" placeholder="yas">
+  </div>
+  <br />
+  <div class="form-group">
+    <label for="formGroupExampleInput2"> yeni soyad</label>
+    <input type="text" class="form-control" name="kisi_soyad" id="yenisoyad" placeholder="soyad">
+  </div>
+  <br />
+  <div class="form-group">
+    <label for="formGroupExampleInput2"> yeni yaş</label>
+    <input type="text" class="form-control" name="kisi_yas" id="yeniyas" placeholder="yaş">
+  </div>
+  <br />
+
+</form>
+<button id="btngonder" type="button">gönder</button>
+<br />
+<button onclick="personelGetir()" type="button">Personel getir</button>
+<br />
+<button id="btndeletekisi" type="button">Personel sil</button>
+<br />
+<button id="btnpersonelguncelle" type="button">Personel güncelle</button>
+<br />
+
+
+
+<div id="personelbilgilistele">
+
+
+</div>
+
+
+
+
+<script>
+    $("#btngonder").click(function() {
+        var personelbilgi = $("#personelform").serialize()
+        $.post("Home/PersonelEkle", personelbilgi)
+            .then(function(data) {
+                console.log(data.message)
+            })
+            .catch, (function(err) {
+                console.log(err.message)
+            })
+    })
+
+</script>
+<script>
+
+
+    function personelGetir() {
+        $.post("/Home/PersonelGetir/")
+            .then(function(model) {
+                var personelbilgilisteleContent = ""
+                model.map(function(value, index) {
+                    personelbilgilisteleContent += `
+                            <h1>${value.kisi_id}-${value.kisi_isim} - ${value.kisi_soyad} - ${value.kisi_yas}</h1>
+                    `
+                })
+
+                $("#personelbilgilistele").append(personelbilgilisteleContent)
+
+            })
+            .catch(function(err) {
+                console.log(err)
+            })
+    }
+
+</script>
+
+<script>
+    $("#btndeletekisi").click(x => {
+            let id = $("#silinecekkisi").val(); 
+            $.ajax({
+                url: "/Home/Personelsil/"+id,
+                type:"post",
+                dataType:"json",
+                success:function(func){
+                    alert("silme başarılı");
+                }
+            });
+        });
+
+</script>
+
+<script>
+$("#btnpersonelguncelle").click(function(){
+     var kisi = {
+        kisi_id:$("#guncellenecekid").val(),
+        kisi_isim:$("#yeniad").val(),
+        kisi_soyad:$("#yenisoyad").val(),
+        kisi_yas:$("#yeniyas").val()
+    };
+    $.post("/Home/PersonelGuncelle", kisi)
+        .then(function(model) {
+            alert("basarılı")
+        });
+})
+   
+</script>
+
